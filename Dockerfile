@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the WAR file from Jenkins workspace to the container's working directory
-COPY /var/lib/jenkins/workspace/OnlineBook_Mart/target/onlinebookstore.war /app/onlinebookstore.war
+COPY ./onlinebookstore.war /app/onlinebookstore.war
 
 # Expose the port the app will run on
 EXPOSE 8080
