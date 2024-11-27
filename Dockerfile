@@ -1,14 +1,11 @@
-# Use an official Java runtime as a base image
-FROM openjdk:17-jdk-slim
+# Use the official Tomcat image from Docker Hub
+FROM tomcat:9.0-jdk11-openjdk
 
-# Set the working directory inside the container
-WORKDIR /app
+# Copy the WAR file from the local system (relative to the build context)
+COPY onlinebookstore.war /usr/local/tomcat/webapps/onlinebookstore.war
 
-# Copy the WAR file from Jenkins workspace to the container's working directory
-COPY ./onlinebookstore.war /app/onlinebookstore.war
-
-# Expose the port the app will run on
+# Expose the Tomcat port (default 8080)
 EXPOSE 8080
 
-# Run the WAR file using the 'java' command
-CMD ["java", "-jar", "/app/onlinebookstore.war"]
+# Start Tomcat when the container runs
+CMD ["catalina.sh", "run"]
