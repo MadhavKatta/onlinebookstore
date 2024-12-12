@@ -7,13 +7,13 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<distributionManagement>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<name>a0myhmhs8eeto-artifactory-primary-0-snapshots</name>
-			<url>https://trialoyh3zi.jfrog.io/artifactory/onlinebookstore-libs-snapshot</url>
-		</snapshotRepository>
-	</distributionManagement>
+        <distributionManagement>
+             <repository>
+                <id>central</id>
+                <name>a0myhmhs8eeto-artifactory-primary-0-releases</name>
+                <url>https://trialoyh3zi.jfrog.io/artifactory/onlinebookstore-libs-release</url>
+             </repository>
+        </distributionManagement>
 
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
