@@ -10,8 +10,8 @@
         <distributionManagement>
              <repository>
                 <id>central</id>
-                <name>a0myhmhs8eeto-artifactory-primary-0-releases</name>
-                <url>https://trialoyh3zi.jfrog.io/artifactory/onlinebookstore-libs-release</url>
+                <name>a0myhmhs8eeto-artifactory-primary-0-snapshots</name>
+                <url>https://trialoyh3zi.jfrog.io/artifactory/onlinebookstore-libs-snapshot</url>
              </repository>
         </distributionManagement>
 
