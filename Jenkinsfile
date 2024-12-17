@@ -43,6 +43,18 @@ pipeline {
                     -Dsonar.java.binaries=target/classes''' // Add -X for detailed logs
             }
         }
+        
+        stage('Trivy Dependency Scan') {
+            steps {
+                script {
+                    echo 'Running Trivy to scan dependencies...'
+                    // Run Trivy to scan dependencies in the application code
+                    sh '''
+                        trivy fs --severity HIGH,CRITICAL . --output dependency-scan.txt || echo "Vulnerabilities detected"
+                    '''
+                }
+            }
+        }
         stage('Build Application') {
             steps {
                 sh 'mvn clean install'
@@ -67,31 +79,31 @@ pipeline {
                     sh 'docker build -t onlinebook:latest .'
                     sh 'docker tag onlinebook:latest madhavkrishna118/onlinebooking:latest'
                     sh 'docker push madhavkrishna118/onlinebooking:latest'
-                    sh 'docker run -d --name onlinebooking -p 8081:8080 madhavkrishna118/onlinebooking:latest'
+                    // sh 'docker run -d --name onlinebooking -p 8081:8080 madhavkrishna118/onlinebooking:latest'
                 }
             }
         }
-        stage('Deploy in Docker') {
+        stage('Post-Build Image Scan by Trivy') {
             steps {
-                sh 'docker run -d --name onlinebooking -p 8081:8080 madhavkrishna118/onlinebooking:latest'
+                script {
+                    echo 'Running Trivy to scan the built image...'
+                    // Run Trivy to scan the built Docker image
+                    sh '''
+                        trivy image --severity HIGH,CRITICAL madhavkrishna118/onlinebooking:latest --format json --output image-scan.json || echo "Vulnerabilities detected in image"
+                    '''
+                }
             }
         }
-    //     stage('Deploy to Kubernetes') {
-    //         steps {
-    //             script {
-    //                 withEnv(['KUBECONFIG=/path/to/kubeconfig']) {
-    //                  sh 'kubectl config use-context OnlineBookCluster'
-
-    //                 // Deploy Kubernetes manifests
-    //                 sh 'kubectl apply -f /var/lib/jenkins/Deploy_Service.yaml --validate=false'
-    //                 // sh 'kubectl apply -f /var/lib/jenkins/cluster-deployment.yaml'
-    //                 // sh 'kubectl apply -f /var/lib/jenkins/cluster-service.yaml'
-
-    //                 // // Ensure the deployment is successful
-    //                 // sh 'kubectl rollout status deployment/your-app-deployment'
-    //             }
-    //         }
-    //     }
-    // }
-}
+        stage('K8S_Deploy') {
+            steps {
+                kubeconfig(
+                    credentialsId: 'k8s-cred', 
+                    serverUrl: 'https://onlinebookcluster-dns-zqa33ivu.hcp.centralus.azmk8s.io:443', 
+                    caCertificate: '''
+                    ''') {
+                    sh 'kubectl apply -f /var/lib/jenkins/workspace/new02/Deploy_Service.yaml -n onlinebookstore'
+                }
+            }
+        }
+    }
 }
