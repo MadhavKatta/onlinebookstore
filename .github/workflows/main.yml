@@ -35,8 +35,8 @@ jobs:
     # Step 5: Build and Push Docker Image
     - name: Build and Push Docker Image
       run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }} .
-          docker push ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}
+        docker build -t maddynewapp/java-app:${{ github.sha }} .
+        docker push maddynewapp/java-app:${{ github.sha }}
 
 
     # # Step 6: Update Kubernetes Deployment (Optional)
