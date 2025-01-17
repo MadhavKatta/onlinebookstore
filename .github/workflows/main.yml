@@ -35,7 +35,7 @@ jobs:
     # Step 5: Build and Push Docker Image
     - name: Build and Push Docker Image
       run: |
-        docker build --progress=plain --no-cache -t madhavkrishna118/java-app:bfc4e346d7c48eb4ac2af05fd46f87790d158c6b .
+        docker build --progress=plain --no-cache -t madhavkrishna118/java-app:${{ github.sha }} .
         docker push madhavkrishna118/java-app:${{ github.sha }}
 
 
