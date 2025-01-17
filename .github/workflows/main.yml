@@ -1,0 +1,55 @@
+name: CI/CD for Java App
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout Code
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 2: Set up Java
+    - name: Set up Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17' # Change to your required version
+        distribution: 'temurin'
+
+    # Step 3: Build the Java Application
+    - name: Build with Maven
+      run: mvn clean package
+
+    # Step 4: Log in to Docker Hub
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # Step 5: Build and Push Docker Image
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }} .
+        docker push ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}
+
+    # # Step 6: Update Kubernetes Deployment (Optional)
+    # - name: Update Kubernetes Deployment
+    #   run: |
+    #     sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}|g" k8s/deployment.yaml
+    #     git config user.name "GitHub Actions"
+    #     git config user.email "actions@github.com"
+    #     git commit -am "Update deployment to ${{ github.sha }}"
+    #     git push origin main
+
+    # # Step 7: Deploy to Kubernetes with kubectl (Optional)
+    # - name: Apply Kubernetes Deployment
+    #   env:
+    #     KUBECONFIG: ${{ secrets.KUBECONFIG }}
+    #   run: |
+    #     kubectl apply -f k8s/deployment.yaml
