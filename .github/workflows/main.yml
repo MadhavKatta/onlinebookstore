@@ -54,8 +54,12 @@ jobs:
             kubectl config set-context github --cluster=k8s --user=github --namespace=${{ secrets.K8S_NAMESPACE }}
             kubectl config use-context github
 
-    - name: Deploy to Kubernetes
+    - name: List directory contents
       run: |
-        kubectl apply -f /root/deployment.yaml
+        ls -l
+        pwd
+
+    - name: Apply Deployment to Kubernetes
+      run: kubectl apply -f ./deployment.yaml
 
       
