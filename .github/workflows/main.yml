@@ -18,10 +18,10 @@ jobs:
     - name: Set up Java
       uses: actions/setup-java@v3
       with:
-        java-version: '17' # Change to your required version
+        java-version: '17'
         distribution: 'temurin'
 
-    # Step 3: Build the Java Applications
+    # Step 3: Build the Java Application
     - name: Build with Maven
       run: mvn clean package
 
@@ -38,22 +38,14 @@ jobs:
         docker build --progress=plain --no-cache -t madhavkrishna118/java-app:${{ github.sha }} .
         docker push madhavkrishna118/java-app:${{ github.sha }}
 
-
-    # # Step 6: Update Kubernetes Deployment (Optional)
-    # - name: Update Kubernetes Deployment
-    #   run: |
-    #     sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}|g" ./deployment.yaml
-
+    # Step 6: Set up kubeconfig
     - name: Set up kubeconfig
       run: |
+        mkdir -p ~/.kube  # Create the .kube directory if it doesn't exist
         echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
         kubectl config use-context kubernetes-admin@kubernetes
-        
-    - name: List directory contents
-      run: |
-        ls -l
 
+    # Step 7: Apply Deployment to Kubernetes
     - name: Apply Deployment to Kubernetes
-      run: kubectl apply -f ./deployment.yaml --validate=false
-
-      
+      run: |
+        kubectl apply -f ./deployment.yaml --validate=false
