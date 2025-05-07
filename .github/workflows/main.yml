@@ -21,7 +21,7 @@ jobs:
         java-version: '17' # Change to your required version
         distribution: 'temurin'
 
-    # Step 3: Build the Java Application
+    # Step 3: Build the Java Applications
     - name: Build with Maven
       run: mvn clean package
 
