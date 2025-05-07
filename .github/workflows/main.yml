@@ -39,17 +39,16 @@ jobs:
         docker push madhavkrishna118/java-app:${{ github.sha }}
 
 
-    # Step 6: Update Kubernetes Deployment (Optional)
-    - name: Update Kubernetes Deployment
-      run: |
-        sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}|g" ./deployment.yaml
+    # # Step 6: Update Kubernetes Deployment (Optional)
+    # - name: Update Kubernetes Deployment
+    #   run: |
+    #     sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/java-app:${{ github.sha }}|g" ./deployment.yaml
 
-    - name: Set up kubectl
+    - name: Set up kubeconfig
       run: |
-            kubectl config set-cluster k8s --server=${{ secrets.K8S_SERVER }} --insecure-skip-tls-verify=true
-            kubectl config set-credentials github --token=${{ secrets.K8S_TOKEN }}
-            kubectl config set-context github --cluster=k8s --user=github-deployer --namespace=${{ secrets.K8S_NAMESPACE }}
-
+        echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
+        kubectl config use-context kubernetes-admin@kubernetes
+        
     - name: List directory contents
       run: |
         ls -l
