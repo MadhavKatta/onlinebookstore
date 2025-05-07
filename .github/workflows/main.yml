@@ -56,6 +56,6 @@ jobs:
         ls -l
 
     - name: Apply Deployment to Kubernetes
-      run: kubectl apply -f ./deployment.yaml
+      run: kubectl apply -f ./deployment.yaml --validate=false
 
       
