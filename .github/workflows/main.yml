@@ -49,7 +49,6 @@ jobs:
             kubectl config set-cluster k8s --server=${{ secrets.K8S_SERVER }} --insecure-skip-tls-verify=true
             kubectl config set-credentials github --token=${{ secrets.K8S_TOKEN }}
             kubectl config set-context github --cluster=k8s --user=github-deployer --namespace=${{ secrets.K8S_NAMESPACE }}
-            kubectl config use-context github
 
     - name: List directory contents
       run: |
