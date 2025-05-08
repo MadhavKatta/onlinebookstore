@@ -37,15 +37,21 @@ jobs:
       run: |
         docker build --progress=plain --no-cache -t madhavkrishna118/java-app:${{ github.sha }} .
         docker push madhavkrishna118/java-app:${{ github.sha }}
-
-    # Step 6: Set up kubeconfig
-    - name: Set up kubeconfig
+    
+    # Step 6: install the oc Client
+    - name: Install oc CLI and Login
       run: |
-        mkdir -p ~/.kube  # Create the .kube directory if it doesn't exist
-        echo "${{ secrets.KUBECONFIG }}" > ~/.kube/config
-        kubectl config use-context kubernetes-admin@kubernetes
+        curl -LO https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-client-linux.tar.gz
+        tar -xvzf openshift-client-linux.tar.gz -C /usr/local/bin
+        oc login --token=${{ secrets.OCP_SA_TOKEN }} --server=${{ secrets.OCP_API }} --insecure-skip-tls-verify=true
+        oc project ${{ secrets.OCP_NAMESPACE }}
 
-    # Step 7: Apply Deployment to Kubernetes
-    - name: Apply Deployment to Kubernetes
+    # Step -7: Replace __IMAGE_TAG__ in deployment.yaml
+    - name: Replace image tag in deployment.yaml
       run: |
-        kubectl apply -f ./deployment.yaml --validate=false
+         sed -i "s|__IMAGE_TAG__|${{ github.sha }}|g" deployment.yaml
+
+    # Step 7: Deploy in OCP
+    - name: Deploy with Dynamic PVC
+      run: |
+        oc apply -f deployment.yaml
