@@ -12,7 +12,6 @@ spec:
       labels:
         app: my-app
     spec:
-      # serviceAccountName: github-deployer
       containers:
         - name: my-container
           image: docker.io/madhavkrishna118/java-app:__IMAGE_TAG__
