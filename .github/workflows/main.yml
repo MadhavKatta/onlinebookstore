@@ -55,5 +55,5 @@ jobs:
     - name: Deploy with Dynamic PVC
       run: |
         oc apply -f deployment.yaml
-        oc expose deploy my-onlinebookstore
-        oc expose svc my-onlinebookstore
+        # oc expose deploy my-onlinebookstore
+        # oc expose svc my-onlinebookstore
